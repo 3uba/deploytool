@@ -24,6 +24,7 @@ func main() {
 				if projectName == "" {
 					return fmt.Errorf("Brak nazwy projektu. Użycie: ./deploytool deploy project_name")
 				}
+				commands.Init()
 				commands.Deploy(projectName)
 				return nil
 			},
@@ -33,6 +34,7 @@ func main() {
 			Aliases: []string{"c"},
 			Usage:   "Create something",
 			Action: func(c *cli.Context) error {
+				commands.Init()
 				commands.Create()
 				return nil
 			},
