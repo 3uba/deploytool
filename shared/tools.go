@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -105,4 +106,11 @@ func WriteProjectConfigFile(config ProjectConfig) error {
 	}
 
 	return nil
+}
+
+func RunCommand(command string, args ...string) error {
+	cmd := exec.Command(command, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
