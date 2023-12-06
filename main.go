@@ -57,6 +57,15 @@ func main() {
 				return nil
 			},
 		},
+		{
+		    Name:    "nginx",
+		    Aliases: []string{"n"},
+		    Usage:   "Nginx setup",
+		    Action: func(c *cli.Context) error {
+		        commands.SetUpNginx()
+                return nil
+            }
+		}
 	}
 
 	err := app.Run(os.Args)
