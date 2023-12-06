@@ -39,6 +39,24 @@ func main() {
 				return nil
 			},
 		},
+		{
+			Name:    "uninstall",
+			Aliases: []string{"u"},
+			Usage:   "Uninstall deploytool",
+			Action: func(c *cli.Context) error {
+				commands.UninstallDeploytool()
+				return nil
+			},
+		},
+		{
+			Name:    "update",
+			Aliases: []string{"up"},
+			Usage:   "Update deploytool",
+			Action: func(c *cli.Context) error {
+				commands.UpdateDeploytool()
+				return nil
+			},
+		},
 	}
 
 	err := app.Run(os.Args)

@@ -224,5 +224,4 @@ func Deploy(projectName string) {
 		fmt.Printf("Error running by Docker: %v\n", err)
 		return
 	}
-
 }
