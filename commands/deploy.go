@@ -167,6 +167,8 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 		imageName := config.Name + "_image"
 		projectPort := config.Port
 		cmd := exec.Command("docker", "build", "-t", imageName, ".")
+        cmd.Stdout = os.Stdout
+        cmd.Stderr = os.Stderr
 		cmd.Dir = projectPath
 		err := cmd.Run()
 		if err != nil {
@@ -175,6 +177,8 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 		}
 
 		cmd = exec.Command("docker", "run", "--name", config.Name, "-dp", fmt.Sprintf("%s:%s", projectPort, projectPort), imageName)
+        cmd.Stdout = os.Stdout
+        cmd.Stderr = os.Stderr
 		cmd.Dir = projectPath
 		err = cmd.Run()
 		if err != nil {
