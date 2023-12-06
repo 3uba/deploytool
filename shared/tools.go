@@ -109,7 +109,9 @@ func WriteProjectConfigFile(config ProjectConfig) error {
 }
 
 func RunCommand(command string, args ...string) error {
+	fmt.Print("Running command: ")
 	cmd := exec.Command(command, args...)
+	fmt.Println(cmd.String())
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
