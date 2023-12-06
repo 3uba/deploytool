@@ -21,12 +21,12 @@ func UpdateDeploytool() error {
 	if err != nil {
 		return fmt.Errorf("Error updating deploytool: %v", err)
 	}
-
+	fmt.Println("Test2")
 	err = shared.RunCommand("cd", currentDir)
 	if err != nil {
 		return fmt.Errorf("Error changing back to the original directory: %v", err)
 	}
-
+	fmt.Println("Test3")
 	fmt.Println("Deploytool has been updated.")
 	return nil
 }
