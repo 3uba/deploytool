@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/3uba/deploytool/shared"
 )
@@ -122,6 +123,65 @@ func getLatestBackupNumber(backupFolder string) (int, error) {
 	return latestBackup, nil
 }
 
+func runByDocker(config shared.ProjectConfig, projectPath string) error {
+	composeFile := filepath.Join(projectPath, "docker-compose.yaml")
+	if _, err := os.Stat(composeFile); err == nil {
+
+		fmt.Print("Do you want to deploy using docker-compose? (yes/no): ")
+		var answer string
+		fmt.Scanln(&answer)
+
+		if strings.ToLower(answer) != "yes" {
+			return nil
+		}
+
+		cmd := exec.Command("docker-compose", "up", "-d", "--build")
+		cmd.Dir = projectPath
+		err := cmd.Run()
+		if err != nil {
+			fmt.Printf("Error running docker-compose: %v\n", err)
+			return err
+		}
+		fmt.Println("Deployment successful using docker-compose.")
+		return err
+	}
+
+	dockerfile := filepath.Join(projectPath, "Dockerfile")
+	if _, err := os.Stat(dockerfile); err == nil {
+
+		fmt.Print("Do you want to deploy using dockerfile? (yes/no): ")
+		var answer string
+		fmt.Scanln(&answer)
+
+		if strings.ToLower(answer) != "yes" {
+			return nil
+		}
+
+		imageName := config.Name + "_image"
+		projectPort := config.Port
+		cmd := exec.Command("docker", "build", "-t", imageName, ".")
+		cmd.Dir = projectPath
+		err := cmd.Run()
+		if err != nil {
+			fmt.Printf("Error building Docker image: %v\n", err)
+			return err
+		}
+
+		cmd = exec.Command("docker", "run", "--name", config.Name, "-dp", fmt.Sprintf("%s:%s", projectPort, projectPort), imageName)
+		cmd.Dir = projectPath
+		err = cmd.Run()
+		if err != nil {
+			fmt.Printf("Error running Docker container: %v\n", err)
+			return err
+		}
+		fmt.Println("Deployment successful using Dockerfile.")
+		return err
+	}
+
+	fmt.Println("No docker-compose.yaml or Dockerfile found. Deployment aborted.")
+	return nil
+}
+
 func Deploy(projectName string) {
 	config, err := shared.ReadProjectConfigFile(projectName)
 	if err != nil {
@@ -158,4 +218,11 @@ func Deploy(projectName string) {
 		fmt.Printf("Error creating symbolic links: %v\n", err)
 		return
 	}
+
+	err = runByDocker(config, projectPath)
+	if err != nil {
+		fmt.Printf("Error running by Docker: %v\n", err)
+		return
+	}
+
 }
