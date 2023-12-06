@@ -3,30 +3,32 @@ package commands
 import (
 	"fmt"
 	"os"
-
-	"github.com/3uba/deploytool/shared"
+	"os/exec"
 )
 
 func UpdateDeploytool() error {
+	fmt.Println("Updating deploytool...")
+
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("Error getting current directory: %v", err)
 	}
 
-	fmt.Println("Updating deploytool...")
+	if err := os.Chdir("/usr/local/bin/deploytool"); err != nil {
+		return fmt.Errorf("Error changing directory: %v", err)
+	}
 
-	err = shared.RunCommand("cd", "/usr/local/bin/deploytool", "&&", "git", "pull")
-
-	fmt.Println("Test")
-	if err != nil {
+	cmd := exec.Command("git", "pull")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("Error updating deploytool: %v", err)
 	}
-	fmt.Println("Test2")
-	err = shared.RunCommand("cd", currentDir)
-	if err != nil {
+
+	if err := os.Chdir(currentDir); err != nil {
 		return fmt.Errorf("Error changing back to the original directory: %v", err)
 	}
-	fmt.Println("Test3")
+
 	fmt.Println("Deploytool has been updated.")
 	return nil
 }
