@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+
 	"github.com/3uba/deploytool/shared"
 )
 
@@ -27,10 +28,10 @@ func Create() {
 		GitURL: gitURL,
 	}
 
-    err := shared.WriteProjectConfigFile(".config", newConfig)
-    if err != nil {
-        fmt.Println("Error writing project config:", err)
-    } else {
-        fmt.Println("Project config written successfully.")
-    }
+	err := shared.WriteProjectConfigFile(newConfig)
+	if err != nil {
+		fmt.Println("Error writing project config:", err)
+	} else {
+		fmt.Println("Project config written successfully.")
+	}
 }
