@@ -43,6 +43,13 @@ func createSymbolicLink(projectPath string) error {
 	envFile := filepath.Join(sharedPath, ".env")
 	if _, err := os.Stat(envFile); err == nil {
 		linkName := filepath.Join(currentPath, ".env")
+
+		if _, err := os.Stat(linkName); err == nil {
+		    if err := os.Remove(linkName); err != nil {
+                return fmt.Errorf("Unable to remove .env file: %v", err)
+            }
+        }
+
 		if err := os.Symlink(envFile, linkName); err != nil {
 			return fmt.Errorf("Unable to create symbolic link for .env file: %v", err)
 		}
@@ -219,7 +226,7 @@ func Deploy(projectName string) {
 		return
 	}
 
-	err = runByDocker(config, projectPath)
+	err = runByDocker(config, projectPath + "/current")
 	if err != nil {
 		fmt.Printf("Error running by Docker: %v\n", err)
 		return
