@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -15,10 +16,19 @@ type ProjectConfig struct {
 	GitURL  string
 }
 
-func ReadProjectConfigFile(filename string, projectName string) (ProjectConfig, error) {
+func ReadProjectConfigFile(projectName string) (ProjectConfig, error) {
 	config := ProjectConfig{}
 
-	file, err := os.Open(filename)
+	dtLocation := os.Getenv("DT_PATH")
+	if dtLocation == "" {
+		fmt.Println("DT_PATH environment variable not set.")
+		dtLocation = "."
+		fmt.Println("Using current directory.")
+	}
+
+	configFilePath := filepath.Join(dtLocation, ".config")
+
+	file, err := os.Open(configFilePath)
 	if err != nil {
 		return config, err
 	}
@@ -67,12 +77,12 @@ func WriteProjectConfigFile(filename string, config ProjectConfig) error {
 	}
 	defer file.Close()
 
+	_, err = file.WriteString(fmt.Sprintf("\n\n# %s configuration", config.Name))
+
 	formatAndWrite := func(key, value string) error {
 		_, err := file.WriteString(fmt.Sprintf("\n%s_%s=%s", config.Name, key, value))
 		return err
 	}
-
-	_, err = file.WriteString(fmt.Sprintf("# %s configuration", config.Name))
 
 	if err := formatAndWrite("user", config.User); err != nil {
 		return err
