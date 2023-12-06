@@ -13,7 +13,6 @@ echo 'export DT_PATH=/usr/local/bin/deploytool' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-
 #### Uninstall
 
 ```bash
@@ -23,14 +22,13 @@ sudo rm -rf /usr/local/bin/deploytool
 source ~/.bashrc
 ```
 
-
 #### Update
 
 ```bash
-curr_dir=${pwd}
+export curr_dir=${pwd}
 cd /usr/local/bin/deploytool
 git pull
-cd curr_dir
+cd ${curr_dir}
 ```
 
 #### Add project 
