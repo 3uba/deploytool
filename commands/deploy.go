@@ -45,10 +45,10 @@ func createSymbolicLink(projectPath string) error {
 		linkName := filepath.Join(currentPath, ".env")
 
 		if _, err := os.Stat(linkName); err == nil {
-		    if err := os.Remove(linkName); err != nil {
-                return fmt.Errorf("Unable to remove .env file: %v", err)
-            }
-        }
+			if err := os.Remove(linkName); err != nil {
+				return fmt.Errorf("Unable to remove .env file: %v", err)
+			}
+		}
 
 		if err := os.Symlink(envFile, linkName); err != nil {
 			return fmt.Errorf("Unable to create symbolic link for .env file: %v", err)
@@ -142,15 +142,27 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 			return nil
 		}
 
-		cmd := exec.Command("docker-compose", "up", "-d", "--build")
+		cmd := exec.Command("docker", "compose", "down")
 		cmd.Dir = projectPath
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		err := cmd.Run()
 		if err != nil {
 			fmt.Printf("Error running docker-compose: %v\n", err)
 			return err
 		}
+
+		cmd = exec.Command("docker", "compose", "up", "-d", "--build")
+		cmd.Dir = projectPath
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			fmt.Printf("Error running docker-compose: %v\n", err)
+			return err
+		}
 		fmt.Println("Deployment successful using docker-compose.")
-		return err
+		return nil
 	}
 
 	dockerfile := filepath.Join(projectPath, "Dockerfile")
@@ -164,11 +176,16 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 			return nil
 		}
 
-		imageName := config.Name + "_image"
+		imageName := fmt.Sprintf("%s-image", config.Name)
+		if imageExists(imageName) {
+			fmt.Printf("Removing existing image: %s\n", imageName)
+			removeDockerImage(imageName)
+		}
+
 		projectPort := config.Port
 		cmd := exec.Command("docker", "build", "-t", imageName, ".")
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		cmd.Dir = projectPath
 		err := cmd.Run()
 		if err != nil {
@@ -177,8 +194,8 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 		}
 
 		cmd = exec.Command("docker", "run", "--name", config.Name, "-dp", fmt.Sprintf("%s:%s", projectPort, projectPort), imageName)
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		cmd.Dir = projectPath
 		err = cmd.Run()
 		if err != nil {
@@ -186,11 +203,29 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 			return err
 		}
 		fmt.Println("Deployment successful using Dockerfile.")
-		return err
+		return nil
 	}
 
 	fmt.Println("No docker-compose.yaml or Dockerfile found. Deployment aborted.")
 	return nil
+}
+
+func imageExists(imageName string) bool {
+	cmd := exec.Command("docker", "image", "inspect", imageName)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	return err == nil
+}
+
+func removeDockerImage(imageName string) {
+	cmd := exec.Command("docker", "image", "rm", imageName)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		fmt.Printf("Error removing Docker image: %v\n", err)
+	}
 }
 
 func Deploy(projectName string) {
@@ -230,7 +265,7 @@ func Deploy(projectName string) {
 		return
 	}
 
-	err = runByDocker(config, projectPath + "/current")
+	err = runByDocker(config, projectPath+"/current")
 	if err != nil {
 		fmt.Printf("Error running by Docker: %v\n", err)
 		return

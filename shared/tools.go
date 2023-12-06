@@ -95,6 +95,9 @@ func WriteProjectConfigFile(config ProjectConfig) error {
 		return err
 	}
 
+	if err := formatAndWrite("name", config.Name); err != nil {
+		return err
+	}
 	if err := formatAndWrite("user", config.User); err != nil {
 		return err
 	}
