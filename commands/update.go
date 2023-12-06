@@ -16,6 +16,8 @@ func UpdateDeploytool() error {
 	fmt.Println("Updating deploytool...")
 
 	err = shared.RunCommand("cd", "/usr/local/bin/deploytool", "&&", "git", "pull")
+
+	fmt.Println("Test")
 	if err != nil {
 		return fmt.Errorf("Error updating deploytool: %v", err)
 	}
