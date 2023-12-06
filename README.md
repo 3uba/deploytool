@@ -2,14 +2,24 @@
 
 ---
 
-### Installation
+#### Installation
 
 ```
 git clone https://github.com/3uba/deploytool
 sudo mv ./deploytool /usr/local/bin/
 chmod +x /usr/local/bin/deploytool/app/deploytool
 echo 'export PATH=$PATH:/usr/local/bin/deploytool/app' >> ~/.bashrc
+echo 'export DT_PATH=/usr/local/bin/deploytool' >> ~/.bashrc
 source ~/.bashrc
+```
+
+#### Update
+
+```bash
+curr_dir=${pwd}
+cd /usr/local/bin/deploytool
+git pull
+cd curr_dir
 ```
 
 #### Add project 
