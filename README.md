@@ -4,7 +4,7 @@
 
 #### Installation
 
-```
+```bash
 git clone https://github.com/3uba/deploytool
 sudo mv ./deploytool /usr/local/bin/
 chmod +x /usr/local/bin/deploytool/app/deploytool
@@ -12,6 +12,17 @@ echo 'export PATH=$PATH:/usr/local/bin/deploytool/app' >> ~/.bashrc
 echo 'export DT_PATH=/usr/local/bin/deploytool' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+
+#### Uninstall
+
+```bash
+sed -i '/\/usr\/local\/bin\/deploytool\/app/d' ~/.bashrc
+sed -i '/DT_PATH=\/usr\/local\/bin\/deploytool/d' ~/.bashrc
+sudo rm -rf /usr/local/bin/deploytool
+source ~/.bashrc
+```
+
 
 #### Update
 
