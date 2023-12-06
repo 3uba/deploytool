@@ -70,8 +70,17 @@ func ReadProjectConfigFile(projectName string) (ProjectConfig, error) {
 	return config, nil
 }
 
-func WriteProjectConfigFile(filename string, config ProjectConfig) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+func WriteProjectConfigFile(config ProjectConfig) error {
+	dtLocation := os.Getenv("DT_PATH")
+	if dtLocation == "" {
+		fmt.Println("DT_PATH environment variable not set.")
+		dtLocation = "."
+		fmt.Println("Using current directory.")
+	}
+
+	configFilePath := filepath.Join(dtLocation, ".config")
+
+	file, err := os.OpenFile(configFilePath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
