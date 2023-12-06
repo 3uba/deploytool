@@ -11,8 +11,6 @@ import (
 	"github.com/3uba/deploytool/shared"
 )
 
-const configFile = ".config"
-
 func prompt(question string) string {
 	fmt.Print(question + ": ")
 	scanner := bufio.NewScanner(os.Stdin)
@@ -45,12 +43,12 @@ func createSymbolicLink(projectPath string) error {
 	if _, err := os.Stat(envFile); err == nil {
 		linkName := filepath.Join(currentPath, ".env")
 		if err := os.Symlink(envFile, linkName); err != nil {
-			return fmt.Errorf("nie można utworzyć linku symbolicznego dla pliku .env: %v", err)
+			return fmt.Errorf("Unable to create symbolic link for .env file: %v", err)
 		}
 
-		fmt.Printf("Utworzono link symboliczny dla pliku .env między %s a %s\n", envFile, linkName)
+		fmt.Printf("Created symbolic link for .env file between %s and %s\n", envFile, linkName)
 	} else if !os.IsNotExist(err) {
-		return fmt.Errorf("nie można uzyskać dostępu do pliku .env: %v", err)
+		return fmt.Errorf("Unable to access .env file: %v", err)
 	}
 
 	return nil
@@ -125,7 +123,7 @@ func getLatestBackupNumber(backupFolder string) (int, error) {
 }
 
 func Deploy(projectName string) {
-	config, err := shared.ReadProjectConfigFile(configFile, projectName)
+	config, err := shared.ReadProjectConfigFile(projectName)
 	if err != nil {
 		fmt.Printf("Error reading project configuration: %v\n", err)
 		return
