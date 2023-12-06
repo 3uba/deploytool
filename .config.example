@@ -1,0 +1,6 @@
+root_dir=/home/ubuntu
+
+# project_name configuration
+project_name_user=
+project_name_token=
+project_name_git_url=
