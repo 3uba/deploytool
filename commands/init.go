@@ -17,7 +17,7 @@ func Init() {
 	configFilePath := filepath.Join(dtLocation, ".config")
 
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		fmt.Println("The .config file doesn't exist.")
+		fmt.Println("The .config file doesn't exist, so we need to create it in " + configFilePath)
 		fmt.Println("Please provide the root directory where all projects should be created:")
 
 		scanner := bufio.NewScanner(os.Stdin)
