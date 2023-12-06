@@ -29,6 +29,5 @@ func UpdateDeploytool() error {
 		return fmt.Errorf("Error changing back to the original directory: %v", err)
 	}
 
-	fmt.Println("Deploytool has been updated.")
 	return nil
 }

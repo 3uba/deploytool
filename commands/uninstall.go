@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/3uba/deploytool/shared"
@@ -19,14 +18,27 @@ func UninstallDeploytool() error {
 		return nil
 	}
 
-	err := shared.RunCommand("sed", "-i", "/\\/usr\\/local\\/bin\\/deploytool\\/app/d", filepath.Join(os.Getenv("HOME"), ".bashrc"))
+	currentDir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("Error getting current directory: %v", err)
+	}
+
+	if err := os.Chdir(os.Getenv("HOME")); err != nil {
+		return fmt.Errorf("Error changing directory to home: %v", err)
+	}
+
+	err = shared.RunCommand("sed", "-i", "/\\/usr\\/local\\/bin\\/deploytool\\/app/d", ".bashrc")
 	if err != nil {
 		return fmt.Errorf("Error removing deploytool from .bashrc: %v", err)
 	}
 
-	err = shared.RunCommand("sed", "-i", "/DT_PATH=\\/usr\\/local\\/bin\\/deploytool/d", filepath.Join(os.Getenv("HOME"), ".bashrc"))
+	err = shared.RunCommand("sed", "-i", "/DT_PATH=\\/usr\\/local\\/bin\\/deploytool/d", ".bashrc")
 	if err != nil {
 		return fmt.Errorf("Error removing DT_PATH from .bashrc: %v", err)
+	}
+
+	if err := os.Chdir(currentDir); err != nil {
+		return fmt.Errorf("Error changing back to the original directory: %v", err)
 	}
 
 	err = os.RemoveAll("/usr/local/bin/deploytool")
