@@ -14,6 +14,7 @@ type ProjectConfig struct {
 	User    string
 	Token   string
 	GitURL  string
+	Port    string
 }
 
 func ReadProjectConfigFile(projectName string) (ProjectConfig, error) {

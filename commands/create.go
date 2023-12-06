@@ -7,7 +7,7 @@ import (
 )
 
 func Create() {
-	var name, user, token, gitURL string
+	var name, user, token, gitURL, port string
 
 	fmt.Print("Enter project name: ")
 	fmt.Scanln(&name)
@@ -21,11 +21,15 @@ func Create() {
 	fmt.Print("Enter Git URL: ")
 	fmt.Scanln(&gitURL)
 
+	fmt.Print("Enter port (press Enter to skip): ")
+	fmt.Scanln(&port)
+
 	newConfig := shared.ProjectConfig{
 		Name:   name,
 		User:   user,
 		Token:  token,
 		GitURL: gitURL,
+		Port:   port,
 	}
 
 	err := shared.WriteProjectConfigFile(newConfig)
