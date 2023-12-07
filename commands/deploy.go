@@ -3,6 +3,7 @@ package commands
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -59,6 +60,34 @@ func createSymbolicLink(projectPath string) error {
 		return fmt.Errorf("Unable to access .env file: %v", err)
 	}
 
+	return nil
+}
+
+func copyEnvFile(projectPath string) error {
+	sharedPath := filepath.Join(projectPath, "shared")
+	currentPath := filepath.Join(projectPath, "current")
+
+	envFile := filepath.Join(sharedPath, ".env")
+	destPath := filepath.Join(currentPath, ".env")
+
+	src, err := os.Open(envFile)
+	if err != nil {
+		return fmt.Errorf("Unable to open .env file: %v", err)
+	}
+	defer src.Close()
+
+	dst, err := os.Create(destPath)
+	if err != nil {
+		return fmt.Errorf("Unable to create .env file in current: %v", err)
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return fmt.Errorf("Unable to copy .env file to current: %v", err)
+	}
+
+	fmt.Printf("Copied .env file from %s to %s\n", envFile, destPath)
 	return nil
 }
 
@@ -259,11 +288,17 @@ func Deploy(projectName string) {
 		return
 	}
 
-	err = createSymbolicLink(projectPath)
+	err = copyEnvFile(projectPath)
 	if err != nil {
-		fmt.Printf("Error creating symbolic links: %v\n", err)
+		fmt.Printf("Error copying .env file: %v\n", err)
 		return
 	}
+
+	// err = createSymbolicLink(projectPath)
+	// if err != nil {
+	// 	fmt.Printf("Error creating symbolic links: %v\n", err)
+	// 	return
+	// }
 
 	err = runByDocker(config, projectPath+"/current")
 	if err != nil {
