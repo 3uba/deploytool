@@ -152,7 +152,7 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 			return err
 		}
 
-		cmd = exec.Command("docker", "compose", "up", "-d", "--build")
+		cmd = exec.Command("docker", "compose", "up", "-d", "--build", "prod")
 		cmd.Dir = projectPath
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
