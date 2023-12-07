@@ -63,6 +63,11 @@ func ReadProjectConfigFile(projectName string) (ProjectConfig, error) {
 			value := strings.TrimPrefix(line, projectName+"_git_url=")
 			config.GitURL = strings.TrimSpace(value)
 		}
+
+		if strings.HasPrefix(line, projectName+"_port=") {
+			value := strings.TrimPrefix(line, projectName+"_port=")
+			config.Port = strings.TrimSpace(value)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
