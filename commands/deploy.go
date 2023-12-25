@@ -171,7 +171,7 @@ func runByDocker(config shared.ProjectConfig, projectPath string) error {
 			return nil
 		}
 
-        fmt.Printf("Project path: %s",projectPath)
+        fmt.Printf("Project path: %s \n", projectPath)
 		cmd := exec.Command("docker", "compose", "down")
 		cmd.Dir = projectPath
 		cmd.Stdout = os.Stdout
