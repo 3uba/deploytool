@@ -1,6 +1,6 @@
 module github.com/3uba/deploytool
 
-go 1.21.4
+go 1.19
 
 require github.com/urfave/cli v1.22.14
 
